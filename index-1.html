@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover Tasmanian and Gulf-inspired fragrances at Scent Oasis, Kenya.">
+  <title>Scent Oasis | Premium Fragrances in Kenya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{--so-wine:#39262c;--so-wine-deep:#28191e;--so-orange:#ff5b2b;--so-cream:#f7f3f0;--so-ink:#351c1d;--so-line:#e9e1dd}
+    *{box-sizing:border-box} body{background:#fffaf8;color:var(--so-ink)}
+    .announcement{background:#00452f;color:white;text-align:center;padding:10px 16px;font-weight:650;font-size:14px;letter-spacing:.01em}
+    .store-header{position:sticky;top:0;z-index:50;background:var(--so-wine);color:#fff;box-shadow:0 2px 8px #1b101322}
+    .store-header-inner{max-width:1400px;margin:auto;min-height:94px;padding:14px 24px;display:flex;align-items:center;gap:24px}
+    .brand-mark{width:84px;height:84px;border:2px solid #d7e8db;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;color:#eff8f0;background:#fff;font-family:Georgia,serif;flex-shrink:0;box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 5px #365747}
+    .brand-mark strong{display:block;font-size:15px;line-height:1.1;color:#244b3b}.brand-mark small{font-size:7px;letter-spacing:1px;color:#244b3b}
+    .brand-wording{display:flex;flex-direction:column;gap:3px;color:#fff}.brand-wording b{font-family:Georgia,serif;letter-spacing:2px;font-size:21px}.brand-wording small{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#e2d5d6}
+    .store-menu{display:flex;gap:22px;margin-left:auto;align-items:center}.store-menu a{color:white;text-decoration:none;font-size:14px;font-weight:550}.store-menu a:hover{color:#ffb39a}
+    .header-icon{color:white;text-decoration:none;font-size:22px;position:relative;padding:6px}.cart-bubble{background:var(--so-orange);color:white;font-size:11px;border-radius:99px;padding:3px 7px;position:absolute;top:-3px;right:-5px}
+    .store-hero{background:linear-gradient(110deg,#38252b 0%,#4b2d31 58%,#6b3b35 100%);color:white;padding:52px 24px;text-align:center}.store-hero .eyebrow{color:#ffc3a9;font-size:12px;text-transform:uppercase;letter-spacing:2.5px;font-weight:700}.store-hero h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,56px);font-weight:500;line-height:1.1;max-width:850px;margin:16px auto}.store-hero p{max-width:680px;margin:0 auto 24px;color:#f0e5e4;font-size:16px;line-height:1.7}.so-button{display:inline-flex;justify-content:center;align-items:center;gap:9px;background:var(--so-orange);color:white!important;text-decoration:none;border:0;border-radius:4px;padding:14px 24px;font-weight:700;cursor:pointer;transition:filter .2s}.so-button:hover{filter:brightness(.94)}.so-button.secondary{background:transparent;border:1px solid #ffffff8a}
+    #shop{max-width:1400px;padding-top:38px;padding-bottom:60px}.collection-heading{text-align:left!important;border-bottom:1px solid var(--so-line);padding-bottom:24px;margin-bottom:22px!important}.collection-heading h2{font-family:Arial,sans-serif!important;font-size:clamp(28px,4vw,40px)!important;font-weight:700!important;color:#351c1d!important}.collection-heading .w-16{display:none}.collection-heading p{font-size:15px!important;margin-top:12px!important}
+    .catalog-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid var(--so-line);border-bottom:1px solid var(--so-line);padding:15px 0;margin-bottom:0;flex-wrap:wrap}.catalog-tools{display:flex;gap:16px;align-items:center}.catalog-tools select,.catalog-tools button{background:white;border:0;color:#432a2e;padding:8px;font-size:14px}.search-wrap{max-width:460px!important;margin:0 0 22px!important}.search-wrap input{border-radius:4px!important;border:1px solid #ded5d1!important;box-shadow:none!important}.product-listing{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0!important;border-left:1px solid var(--so-line);border-top:1px solid var(--so-line)}
+    .product-card{border:0!important;border-right:1px solid var(--so-line)!important;border-bottom:1px solid var(--so-line)!important;border-radius:0!important;box-shadow:none!important;min-width:0}.product-card:hover{box-shadow:0 6px 18px #38252b12!important}.product-art{height:220px!important;border-radius:0!important}.product-body{padding:18px!important}.product-card h3{font-family:Arial,sans-serif!important;font-size:16px!important;line-height:1.45!important;color:#351c1d!important}.product-price{color:var(--so-orange)!important;font-size:21px!important;font-weight:500!important}.add-to-cart{background:var(--so-orange)!important;color:white!important;border-radius:3px!important;padding:11px 13px!important}.add-to-cart:hover{background:#e84a20!important;color:white!important}
+    .so-dashboard{background:#f7f3f0;border-top:1px solid var(--so-line);padding:58px 20px}.dashboard-wrap{max-width:1250px;margin:auto}.dashboard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:25px}.dashboard-top h2{font-size:30px;font-weight:750;color:#351c1d;margin:0}.dashboard-top p{color:#79696a;margin-top:6px}.dashboard-label{display:inline-block;background:#fce0d6;color:#a43c20;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px}.dashboard-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:24px 0}.dashboard-card,.dashboard-panel{background:white;border:1px solid var(--so-line);border-radius:8px;padding:20px;box-shadow:0 2px 8px #321c1d08}.dashboard-card .metric{font-size:28px;font-weight:750;color:#351c1d;margin:10px 0 4px}.dashboard-card .muted,.dashboard-panel .muted{font-size:12px;color:#8b7b7b}.dashboard-card i{color:var(--so-orange);font-size:20px}.dashboard-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}.dashboard-panel h3{font-size:17px;font-weight:750;margin:0 0 16px}.dashboard-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.dashboard-actions a{border:1px solid var(--so-line);border-radius:5px;padding:13px;text-decoration:none;color:#432a2e;font-weight:650;font-size:13px}.dashboard-actions a:hover{border-color:var(--so-orange);background:#fff7f3}.dashboard-table{width:100%;border-collapse:collapse;font-size:13px}.dashboard-table th,.dashboard-table td{text-align:left;padding:12px 8px;border-bottom:1px solid #f0e9e6}.status-pill{background:#fff0e8;color:#9c452c;border-radius:20px;padding:4px 8px;font-size:11px}
+
+    .follow-us{background:#fffaf8;border-top:1px solid var(--so-line);padding:42px 20px;text-align:center}.follow-us-inner{max-width:1000px;margin:auto}.follow-us h2{font-family:Georgia,serif;font-size:clamp(25px,4vw,34px);color:var(--so-ink);margin:0 0 8px}.follow-us p{color:#79696a;margin:0 auto 22px;max-width:560px;font-size:14px;line-height:1.7}.social-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.social-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:4px;background:var(--so-wine);color:white!important;text-decoration:none;font-weight:700;min-width:170px;transition:background .2s,transform .2s}.social-link:hover{background:var(--so-orange);transform:translateY(-2px)}.social-link i{font-size:19px}.social-note{font-size:11px!important;color:#958585!important;margin-top:16px!important}
+    footer{background:var(--so-wine-deep)!important}
+    @media(max-width:900px){.store-header-inner{padding:12px 16px;gap:12px}.brand-mark{width:70px;height:70px}.brand-wording b{font-size:17px}.store-menu{gap:12px}.store-menu a{font-size:12px}.product-listing{grid-template-columns:repeat(2,minmax(0,1fr))}.product-art{height:180px!important}.dashboard-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}}
+    @media(max-width:560px){.announcement{font-size:12px}.store-header-inner{min-height:80px;gap:10px}.brand-mark{width:58px;height:58px}.brand-mark strong{font-size:11px}.brand-mark small{font-size:6px}.brand-wording b{font-size:14px;letter-spacing:1px}.brand-wording small{font-size:8px;letter-spacing:1px}.store-menu{margin-left:auto;gap:8px}.store-menu a:not(.header-icon){display:none}.header-icon{font-size:20px}.store-hero{padding:38px 18px}.store-hero p{font-size:14px}.product-listing{grid-template-columns:repeat(2,minmax(0,1fr))}.product-art{height:145px!important}.product-body{padding:12px!important}.product-card h3{font-size:14px!important}.product-card .product-description{font-size:12px!important}.product-price{font-size:17px!important}.catalog-toolbar{align-items:flex-start}.dashboard-cards{gap:10px}.dashboard-card{padding:14px}.dashboard-card .metric{font-size:23px}.dashboard-actions{grid-template-columns:1fr}.dashboard-table{font-size:11px}.dashboard-table th,.dashboard-table td{padding:9px 4px}}
+  
+    .product-badge{position:absolute;top:12px;left:10px;background:#64202d;color:#fff;padding:5px 7px;font-size:9px;letter-spacing:.04em;text-transform:uppercase;max-width:78%;line-height:1.4}
+    .product-art{height:190px!important;position:relative}
+    .product-body{padding:15px!important;gap:7px}
+    .product-brand{font-size:9px;letter-spacing:.12em;color:#9a7777;text-transform:uppercase}
+    .product-card h3{min-height:44px}
+    .product-description{font-size:12px;line-height:1.5;color:#806f6f}
+    .product-buy-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;flex-wrap:wrap}
+    .product-price{font-size:18px;font-weight:700;color:#ee572c}
+    .add-to-cart{display:inline-flex;align-items:center;gap:6px}
+    @media(max-width:560px){.product-art{height:135px!important}.product-badge{font-size:8px;top:6px;left:5px}.product-price{font-size:15px}.add-to-cart{padding:8px!important;font-size:11px}}
+
+  </style>
+</head>
+<body class="bg-neutral-50 font-sans text-neutral-800 scroll-smooth">
+  <div class="announcement">Discover your signature scent · Premium fragrance picks for every occasion</div>
+  <header class="store-header">
+    <div class="store-header-inner">
+      <a href="#top" class="brand-mark" aria-label="Scent Oasis home"><span><strong>SCENT<br>OASIS</strong><small>FRAGRANCES</small></span></a>
+      <a href="#top" class="brand-wording" style="text-decoration:none"><b>SCENT OASIS</b><small>Premium fragrances · Kenya</small></a>
+      <nav class="store-menu" aria-label="Main navigation">
+        <a href="#shop">Shop all</a><a href="#shop">Collections</a><a href="#contact">Contact</a><a href="#follow-us">Follow Us</a><a href="#dashboard">Dashboard</a>
+        <a href="#shop" class="header-icon" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="#checkout" class="header-icon" aria-label="Shopping cart"><i class="fa-solid fa-cart-shopping"></i><span class="cart-bubble" id="header-cart-count">0</span></a>
+      </nav>
+    </div>
+  </header>
+  <section id="top" class="store-hero">
+    <div class="eyebrow">The Scent Oasis collection</div>
+    <h1>Find the fragrance that feels like you.</h1>
+    <p>Explore warm oudh, smooth amber, fresh florals and distinctive everyday scents. Discover your next favourite fragrance with Scent Oasis Kenya.</p>
+    <a href="#shop" class="so-button">Shop all fragrances <i class="fa-solid fa-arrow-right"></i></a>
+  </section>
+
+  <main id="shop" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+    <div class="collection-heading mb-8">
+      <h2 class="text-3xl font-serif font-semibold text-neutral-900 mb-2">All fragrances</h2>
+      <div class="w-16 h-1 bg-amber-600 mx-auto rounded-full mt-4"></div>
+      <p class="text-sm text-neutral-500 mt-4">Prices shown in Kenyan shillings (KES).</p>
+    </div>
+    <div class="search-wrap max-w-md mx-auto mb-10 relative">
+      <label for="search-input" class="sr-only">Search perfumes</label>
+      <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input type="search" id="search-input" placeholder="Search by name, origin or notes..." class="w-full pl-11 pr-5 py-3.5 bg-white border border-neutral-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 shadow-sm text-sm">
+    </div>
+    <div class="catalog-toolbar"><div class="catalog-tools"><span><i class="fa-solid fa-sliders mr-2"></i>Catalogue</span><label for="sort-products" class="text-sm">Sort by</label><select id="sort-products" aria-label="Sort products"><option value="featured">Featured</option><option value="name">Alphabetically, A-Z</option><option value="price-low">Price, low to high</option><option value="price-high">Price, high to low</option></select></div><span id="catalogue-status" class="text-sm text-neutral-500">Starter catalogue · Connect Supabase to load live products</span></div>
+    <p class="text-xs text-neutral-500 text-center mb-6">Prices transcribed from Middle Eastern Scents Kenya public catalogue, checked 24 October 2026. This is a starter import of the first 80 listings, not the full 778-product catalogue. Prices and stock may change; verify before selling. Products are not affiliated with or supplied by that retailer.</p>
+    <p id="no-results" class="hidden text-center text-neutral-500 mb-8">No fragrances match your search.</p>
+    <div class="product-listing" id="product-grid">
+      <article class="product-card" data-name="Shiyaaka Sky Khadlaj" data-origin="Middle Eastern" data-notes="shiyaaka sky khadlaj">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Shiyaaka Sky Khadlaj</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,200</span><button class="add-to-cart" data-name="Shiyaaka Sky Khadlaj" data-price="3200" aria-label="Add Shiyaaka Sky Khadlaj to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="La Fede Intoxicate Mystique" data-origin="Middle Eastern" data-notes="la fede intoxicate mystique">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>La Fede Intoxicate Mystique</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="La Fede Intoxicate Mystique" data-price="3000" aria-label="Add La Fede Intoxicate Mystique to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Sueno Khadlaj" data-origin="Middle Eastern" data-notes="sueno khadlaj">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Sueno Khadlaj</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,400</span><button class="add-to-cart" data-name="Sueno Khadlaj" data-price="3400" aria-label="Add Sueno Khadlaj to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Lattafa Fahad" data-origin="Middle Eastern" data-notes="lattafa fahad">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Lattafa Fahad</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Lattafa Fahad" data-price="3500" aria-label="Add Lattafa Fahad to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Lattafa Badee Al Oud Amethyst Fusion" data-origin="Middle Eastern" data-notes="lattafa badee al oud amethyst fusion">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Lattafa Badee Al Oud Amethyst Fusion</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Lattafa Badee Al Oud Amethyst Fusion" data-price="3600" aria-label="Add Lattafa Badee Al Oud Amethyst Fusion to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Riiffs Spectra &amp; Surge" data-origin="Middle Eastern" data-notes="riiffs spectra &amp; surge">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Riiffs Spectra &amp; Surge</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Riiffs Spectra &amp; Surge" data-price="3000" aria-label="Add Riiffs Spectra &amp; Surge to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Riiffs Luna &amp; Stella 100ml (2 x 50ml)" data-origin="Middle Eastern" data-notes="riiffs luna &amp; stella 100ml (2 x 50ml)">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Riiffs Luna &amp; Stella 100ml (2 x 50ml)</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Riiffs Luna &amp; Stella 100ml (2 x 50ml)" data-price="3000" aria-label="Add Riiffs Luna &amp; Stella 100ml (2 x 50ml) to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Johra Nusuk" data-origin="Middle Eastern" data-notes="johra nusuk">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Johra Nusuk</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,200</span><button class="add-to-cart" data-name="Johra Nusuk" data-price="3200" aria-label="Add Johra Nusuk to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Maison Asrar Regent" data-origin="Middle Eastern" data-notes="maison asrar regent">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Maison Asrar Regent</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,900</span><button class="add-to-cart" data-name="Maison Asrar Regent" data-price="3900" aria-label="Add Maison Asrar Regent to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Khadlaj Muse Extrait de Parfum" data-origin="Middle Eastern" data-notes="khadlaj muse extrait de parfum">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Khadlaj Muse Extrait de Parfum</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Khadlaj Muse Extrait de Parfum" data-price="3600" aria-label="Add Khadlaj Muse Extrait de Parfum to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Petra Viola" data-origin="Middle Eastern" data-notes="petra viola">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Petra Viola</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="Petra Viola" data-price="4500" aria-label="Add Petra Viola to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Nava Sol" data-origin="Middle Eastern" data-notes="rayhaan nava sol">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Nava Sol</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Rayhaan Nava Sol" data-price="2800" aria-label="Add Rayhaan Nava Sol to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="La Fede Aura Vanilla Milk" data-origin="Middle Eastern" data-notes="la fede aura vanilla milk">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>La Fede Aura Vanilla Milk</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,300</span><button class="add-to-cart" data-name="La Fede Aura Vanilla Milk" data-price="2300" aria-label="Add La Fede Aura Vanilla Milk to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Cedras Blanc" data-origin="Middle Eastern" data-notes="rayhaan cedras blanc">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Cedras Blanc</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,600</span><button class="add-to-cart" data-name="Rayhaan Cedras Blanc" data-price="2600" aria-label="Add Rayhaan Cedras Blanc to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Pacific Aloha" data-origin="Middle Eastern" data-notes="rayhaan pacific aloha">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Pacific Aloha</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,600</span><button class="add-to-cart" data-name="Rayhaan Pacific Aloha" data-price="2600" aria-label="Add Rayhaan Pacific Aloha to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Badee Al Oud Black Exposed" data-origin="Middle Eastern" data-notes="badee al oud black exposed">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Badee Al Oud Black Exposed</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Badee Al Oud Black Exposed" data-price="3600" aria-label="Add Badee Al Oud Black Exposed to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Angham Duo Bundle" data-origin="Middle Eastern" data-notes="angham duo bundle">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Angham Duo Bundle</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 6,500</span><button class="add-to-cart" data-name="Angham Duo Bundle" data-price="6500" aria-label="Add Angham Duo Bundle to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Hawas Chrome" data-origin="Middle Eastern" data-notes="hawas chrome">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Hawas Chrome</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,800</span><button class="add-to-cart" data-name="Hawas Chrome" data-price="4800" aria-label="Add Hawas Chrome to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Al Absar Shahoor Platinum" data-origin="Middle Eastern" data-notes="al absar shahoor platinum">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Al Absar Shahoor Platinum</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,500</span><button class="add-to-cart" data-name="Al Absar Shahoor Platinum" data-price="2500" aria-label="Add Al Absar Shahoor Platinum to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Al Absar Rania" data-origin="Middle Eastern" data-notes="al absar rania">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Al Absar Rania</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Al Absar Rania" data-price="3000" aria-label="Add Al Absar Rania to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Seasons Drift" data-origin="Middle Eastern" data-notes="seasons drift">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Seasons Drift</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Seasons Drift" data-price="3600" aria-label="Add Seasons Drift to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Imperial Noir EDP" data-origin="Middle Eastern" data-notes="imperial noir edp">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Imperial Noir EDP</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,000</span><button class="add-to-cart" data-name="Imperial Noir EDP" data-price="2000" aria-label="Add Imperial Noir EDP to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Falak Nusuk" data-origin="Middle Eastern" data-notes="falak nusuk">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Falak Nusuk</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Falak Nusuk" data-price="3500" aria-label="Add Falak Nusuk to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Momento Riiffs" data-origin="Middle Eastern" data-notes="momento riiffs">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Momento Riiffs</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Momento Riiffs" data-price="3000" aria-label="Add Momento Riiffs to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="La Fede Opulence Noir" data-origin="Middle Eastern" data-notes="la fede opulence noir">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>La Fede Opulence Noir</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="La Fede Opulence Noir" data-price="3000" aria-label="Add La Fede Opulence Noir to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Riiffs Zenith" data-origin="Middle Eastern" data-notes="riiffs zenith">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Riiffs Zenith</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Riiffs Zenith" data-price="3000" aria-label="Add Riiffs Zenith to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Riiffs Fleurie Emerald" data-origin="Middle Eastern" data-notes="riiffs fleurie emerald">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Riiffs Fleurie Emerald</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Riiffs Fleurie Emerald" data-price="3000" aria-label="Add Riiffs Fleurie Emerald to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Riiffs Seasons Rise" data-origin="Middle Eastern" data-notes="riiffs seasons rise">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Riiffs Seasons Rise</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Riiffs Seasons Rise" data-price="3600" aria-label="Add Riiffs Seasons Rise to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Mashrabya" data-origin="Middle Eastern" data-notes="mashrabya">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Mashrabya</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Mashrabya" data-price="2800" aria-label="Add Mashrabya to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Philos Rosso Maison Alhambra" data-origin="Middle Eastern" data-notes="philos rosso maison alhambra">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Philos Rosso Maison Alhambra</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,500</span><button class="add-to-cart" data-name="Philos Rosso Maison Alhambra" data-price="2500" aria-label="Add Philos Rosso Maison Alhambra to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Lava Maison Alhambra" data-origin="Middle Eastern" data-notes="lava maison alhambra">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Sale price listed at source</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Lava Maison Alhambra</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,500</span><button class="add-to-cart" data-name="Lava Maison Alhambra" data-price="1500" aria-label="Add Lava Maison Alhambra to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Niche Emarati Hayaam" data-origin="Middle Eastern" data-notes="niche emarati hayaam">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Sale price listed at source</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Niche Emarati Hayaam</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,000</span><button class="add-to-cart" data-name="Niche Emarati Hayaam" data-price="4000" aria-label="Add Niche Emarati Hayaam to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Victorioso Maison Alhambra" data-origin="Middle Eastern" data-notes="victorioso maison alhambra">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Sale price listed at source</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Victorioso Maison Alhambra</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,600</span><button class="add-to-cart" data-name="Victorioso Maison Alhambra" data-price="1600" aria-label="Add Victorioso Maison Alhambra to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Exquisite Club Pour Homme" data-origin="Middle Eastern" data-notes="exquisite club pour homme">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Sale price listed at source</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Exquisite Club Pour Homme</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,500</span><button class="add-to-cart" data-name="Exquisite Club Pour Homme" data-price="1500" aria-label="Add Exquisite Club Pour Homme to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Philos Centro Maison Alhambra" data-origin="Middle Eastern" data-notes="philos centro maison alhambra">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Philos Centro Maison Alhambra</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Philos Centro Maison Alhambra" data-price="2800" aria-label="Add Philos Centro Maison Alhambra to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Florenza Maison Alhambra" data-origin="Middle Eastern" data-notes="florenza maison alhambra">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Florenza Maison Alhambra</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,600</span><button class="add-to-cart" data-name="Florenza Maison Alhambra" data-price="2600" aria-label="Add Florenza Maison Alhambra to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="The Memory of Oud" data-origin="Middle Eastern" data-notes="the memory of oud">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>The Memory of Oud</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,600</span><button class="add-to-cart" data-name="The Memory of Oud" data-price="2600" aria-label="Add The Memory of Oud to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Sehr Perfume Mist" data-origin="Middle Eastern" data-notes="sehr perfume mist">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Sehr Perfume Mist</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,200</span><button class="add-to-cart" data-name="Sehr Perfume Mist" data-price="1200" aria-label="Add Sehr Perfume Mist to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Layaan Perfume Mist" data-origin="Middle Eastern" data-notes="layaan perfume mist">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Layaan Perfume Mist</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,200</span><button class="add-to-cart" data-name="Layaan Perfume Mist" data-price="1200" aria-label="Add Layaan Perfume Mist to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Teriaq Perfume Mist" data-origin="Middle Eastern" data-notes="teriaq perfume mist">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Teriaq Perfume Mist</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,200</span><button class="add-to-cart" data-name="Teriaq Perfume Mist" data-price="1200" aria-label="Add Teriaq Perfume Mist to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Haya Perfume Mist" data-origin="Middle Eastern" data-notes="haya perfume mist">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Haya Perfume Mist</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,200</span><button class="add-to-cart" data-name="Haya Perfume Mist" data-price="1200" aria-label="Add Haya Perfume Mist to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Lattafa Pride Breeze" data-origin="Middle Eastern" data-notes="lattafa pride breeze">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Lattafa Pride Breeze</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,000</span><button class="add-to-cart" data-name="Lattafa Pride Breeze" data-price="4000" aria-label="Add Lattafa Pride Breeze to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Maison Alhambra Rose Origami" data-origin="Middle Eastern" data-notes="maison alhambra rose origami">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Maison Alhambra Rose Origami</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,300</span><button class="add-to-cart" data-name="Maison Alhambra Rose Origami" data-price="2300" aria-label="Add Maison Alhambra Rose Origami to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Mahd Al Dhahab Arabiyat Prestige" data-origin="Middle Eastern" data-notes="mahd al dhahab arabiyat prestige">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Mahd Al Dhahab Arabiyat Prestige</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,400</span><button class="add-to-cart" data-name="Mahd Al Dhahab Arabiyat Prestige" data-price="4400" aria-label="Add Mahd Al Dhahab Arabiyat Prestige to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Hawas Majestic" data-origin="Middle Eastern" data-notes="hawas majestic">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Hawas Majestic</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,800</span><button class="add-to-cart" data-name="Hawas Majestic" data-price="4800" aria-label="Add Hawas Majestic to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Tonquin Giza" data-origin="Middle Eastern" data-notes="rayhaan tonquin giza">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Tonquin Giza</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Rayhaan Tonquin Giza" data-price="2800" aria-label="Add Rayhaan Tonquin Giza to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Tiger – Cal Cologne Edition" data-origin="Middle Eastern" data-notes="rayhaan tiger – cal cologne edition">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Tiger – Cal Cologne Edition</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Rayhaan Tiger – Cal Cologne Edition" data-price="2800" aria-label="Add Rayhaan Tiger – Cal Cologne Edition to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Wolf" data-origin="Middle Eastern" data-notes="rayhaan wolf">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Wolf</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Rayhaan Wolf" data-price="2800" aria-label="Add Rayhaan Wolf to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Frostbite Extrait French Avenue X Aromatix" data-origin="Middle Eastern" data-notes="frostbite extrait french avenue x aromatix">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Frostbite Extrait French Avenue X Aromatix</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="Frostbite Extrait French Avenue X Aromatix" data-price="4500" aria-label="Add Frostbite Extrait French Avenue X Aromatix to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="French Avenue Jasmere" data-origin="Middle Eastern" data-notes="french avenue jasmere">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>French Avenue Jasmere</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,000</span><button class="add-to-cart" data-name="French Avenue Jasmere" data-price="4000" aria-label="Add French Avenue Jasmere to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Naughty Dates By French Avenue X Aromatix" data-origin="Middle Eastern" data-notes="naughty dates by french avenue x aromatix">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Naughty Dates By French Avenue X Aromatix</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="Naughty Dates By French Avenue X Aromatix" data-price="4500" aria-label="Add Naughty Dates By French Avenue X Aromatix to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Nocturno Elixir" data-origin="Middle Eastern" data-notes="rayhaan nocturno elixir">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Nocturno Elixir</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,800</span><button class="add-to-cart" data-name="Rayhaan Nocturno Elixir" data-price="2800" aria-label="Add Rayhaan Nocturno Elixir to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Platine Blanc French Avenue Aromatix X" data-origin="Middle Eastern" data-notes="platine blanc french avenue aromatix x">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Platine Blanc French Avenue Aromatix X</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="Platine Blanc French Avenue Aromatix X" data-price="4500" aria-label="Add Platine Blanc French Avenue Aromatix X to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Hawas Reina Rasasi" data-origin="Middle Eastern" data-notes="hawas reina rasasi">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Hawas Reina Rasasi</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,400</span><button class="add-to-cart" data-name="Hawas Reina Rasasi" data-price="4400" aria-label="Add Hawas Reina Rasasi to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Royal Taboo French Avenue x Aromatix" data-origin="Middle Eastern" data-notes="royal taboo french avenue x aromatix">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Royal Taboo French Avenue x Aromatix</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="Royal Taboo French Avenue x Aromatix" data-price="4500" aria-label="Add Royal Taboo French Avenue x Aromatix to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="French Avenue Aromatix Magnetiq" data-origin="Middle Eastern" data-notes="french avenue aromatix magnetiq">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>French Avenue Aromatix Magnetiq</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="French Avenue Aromatix Magnetiq" data-price="4500" aria-label="Add French Avenue Aromatix Magnetiq to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Khadlaj Biscotti Melon Misk" data-origin="Middle Eastern" data-notes="khadlaj biscotti melon misk">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Khadlaj Biscotti Melon Misk</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,900</span><button class="add-to-cart" data-name="Khadlaj Biscotti Melon Misk" data-price="2900" aria-label="Add Khadlaj Biscotti Melon Misk to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rayhaan Azul" data-origin="Middle Eastern" data-notes="rayhaan azul">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rayhaan Azul</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,700</span><button class="add-to-cart" data-name="Rayhaan Azul" data-price="2700" aria-label="Add Rayhaan Azul to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="St. Ives Vanilla Oat Milk Body Wash" data-origin="Middle Eastern" data-notes="st. ives vanilla oat milk body wash">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>St. Ives Vanilla Oat Milk Body Wash</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 1,050</span><button class="add-to-cart" data-name="St. Ives Vanilla Oat Milk Body Wash" data-price="1050" aria-label="Add St. Ives Vanilla Oat Milk Body Wash to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Khadlaj Sawaar Vanille Blanc" data-origin="Middle Eastern" data-notes="khadlaj sawaar vanille blanc">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Khadlaj Sawaar Vanille Blanc</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,600</span><button class="add-to-cart" data-name="Khadlaj Sawaar Vanille Blanc" data-price="3600" aria-label="Add Khadlaj Sawaar Vanille Blanc to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Aristo Arabiyat Prestige" data-origin="Middle Eastern" data-notes="aristo arabiyat prestige">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Aristo Arabiyat Prestige</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,400</span><button class="add-to-cart" data-name="Aristo Arabiyat Prestige" data-price="3400" aria-label="Add Aristo Arabiyat Prestige to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Fakhama Maison Asrar" data-origin="Middle Eastern" data-notes="fakhama maison asrar">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Fakhama Maison Asrar</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,000</span><button class="add-to-cart" data-name="Fakhama Maison Asrar" data-price="3000" aria-label="Add Fakhama Maison Asrar to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Melted Sugar" data-origin="Middle Eastern" data-notes="melted sugar">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Melted Sugar</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,300</span><button class="add-to-cart" data-name="Melted Sugar" data-price="2300" aria-label="Add Melted Sugar to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Melted Spell" data-origin="Middle Eastern" data-notes="melted spell">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Melted Spell</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,300</span><button class="add-to-cart" data-name="Melted Spell" data-price="2300" aria-label="Add Melted Spell to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Melted Desire" data-origin="Middle Eastern" data-notes="melted desire">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Melted Desire</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,300</span><button class="add-to-cart" data-name="Melted Desire" data-price="2300" aria-label="Add Melted Desire to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Nora Lattafa" data-origin="Middle Eastern" data-notes="nora lattafa">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Nora Lattafa</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 2,700</span><button class="add-to-cart" data-name="Nora Lattafa" data-price="2700" aria-label="Add Nora Lattafa to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Give Me Gourmand Choco Overdose" data-origin="Middle Eastern" data-notes="give me gourmand choco overdose">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Give Me Gourmand Choco Overdose</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Give Me Gourmand Choco Overdose" data-price="3500" aria-label="Add Give Me Gourmand Choco Overdose to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Give Me Gourmand Mallow Madness" data-origin="Middle Eastern" data-notes="give me gourmand mallow madness">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Give Me Gourmand Mallow Madness</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Give Me Gourmand Mallow Madness" data-price="3500" aria-label="Add Give Me Gourmand Mallow Madness to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Give Me Gourmand Cookie" data-origin="Middle Eastern" data-notes="give me gourmand cookie">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Give Me Gourmand Cookie</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Give Me Gourmand Cookie" data-price="3500" aria-label="Add Give Me Gourmand Cookie to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Give Me Gourmand Berry on Top" data-origin="Middle Eastern" data-notes="give me gourmand berry on top">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Give Me Gourmand Berry on Top</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Give Me Gourmand Berry on Top" data-price="3500" aria-label="Add Give Me Gourmand Berry on Top to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Give Me Gourmand Vanilla Freak" data-origin="Middle Eastern" data-notes="give me gourmand vanilla freak">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Give Me Gourmand Vanilla Freak</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Give Me Gourmand Vanilla Freak" data-price="3500" aria-label="Add Give Me Gourmand Vanilla Freak to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Whipped Pleasure Give Me Gourmand" data-origin="Middle Eastern" data-notes="whipped pleasure give me gourmand">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Whipped Pleasure Give Me Gourmand</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Whipped Pleasure Give Me Gourmand" data-price="3500" aria-label="Add Whipped Pleasure Give Me Gourmand to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Soul of Bali" data-origin="Middle Eastern" data-notes="soul of bali">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Soul of Bali</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 10,000</span><button class="add-to-cart" data-name="Soul of Bali" data-price="10000" aria-label="Add Soul of Bali to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Essence of Casablanca" data-origin="Middle Eastern" data-notes="essence of casablanca">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Essence of Casablanca</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 10,000</span><button class="add-to-cart" data-name="Essence of Casablanca" data-price="10000" aria-label="Add Essence of Casablanca to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Shaghaf Nectar Blush" data-origin="Middle Eastern" data-notes="shaghaf nectar blush">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Shaghaf Nectar Blush</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 7,000</span><button class="add-to-cart" data-name="Shaghaf Nectar Blush" data-price="7000" aria-label="Add Shaghaf Nectar Blush to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Musk 07 Extrait de Parfum" data-origin="Middle Eastern" data-notes="musk 07 extrait de parfum">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Musk 07 Extrait de Parfum</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 7,500</span><button class="add-to-cart" data-name="Musk 07 Extrait de Parfum" data-price="7500" aria-label="Add Musk 07 Extrait de Parfum to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Rose 01 Extrait de Parfum" data-origin="Middle Eastern" data-notes="rose 01 extrait de parfum">
+        <div class="product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-spray-can-sparkles text-rose-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Rose 01 Extrait de Parfum</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 7,500</span><button class="add-to-cart" data-name="Rose 01 Extrait de Parfum" data-price="7500" aria-label="Add Rose 01 Extrait de Parfum to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Shaghaf Oud Tonka Mini – 25 ml" data-origin="Middle Eastern" data-notes="shaghaf oud tonka mini – 25 ml">
+        <div class="product-art bg-gradient-to-tr from-amber-100 to-yellow-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-bottle-droplet text-amber-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Shaghaf Oud Tonka Mini – 25 ml</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,200</span><button class="add-to-cart" data-name="Shaghaf Oud Tonka Mini – 25 ml" data-price="3200" aria-label="Add Shaghaf Oud Tonka Mini – 25 ml to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="Coco Blanco Gulf Orchid" data-origin="Middle Eastern" data-notes="coco blanco gulf orchid">
+        <div class="product-art bg-gradient-to-tr from-purple-100 to-pink-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-gem text-purple-500 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>Coco Blanco Gulf Orchid</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 3,500</span><button class="add-to-cart" data-name="Coco Blanco Gulf Orchid" data-price="3500" aria-label="Add Coco Blanco Gulf Orchid to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+      <article class="product-card" data-name="III Thriller Extrait de Parfum" data-origin="Middle Eastern" data-notes="iii thriller extrait de parfum">
+        <div class="product-art bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center relative"><span class="product-badge">Middle Eastern fragrance</span><i class="fa-solid fa-leaf text-emerald-600 text-5xl" aria-hidden="true"></i></div>
+        <div class="product-body flex flex-col flex-grow"><p class="product-brand">SCENT OASIS • FRAGRANCE</p><h3>III Thriller Extrait de Parfum</h3><p class="product-description">Explore this fragrance from our curated selection.</p><div class="product-buy-row"><span class="product-price">KES 4,500</span><button class="add-to-cart" data-name="III Thriller Extrait de Parfum" data-price="4500" aria-label="Add III Thriller Extrait de Parfum to order"><i class="fa-solid fa-cart-plus"></i> Add</button></div></div>
+      </article>
+    </div>
+  </main>
+
+  <section id="reviews" class="bg-amber-50/50 py-16 md:py-20 border-t border-neutral-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="text-center mb-12"><h2 class="text-3xl font-serif font-semibold text-neutral-900 mb-2">What Our Clients Say</h2><p class="text-sm text-neutral-500">Add verified customer reviews here as your store grows.</p><div class="w-12 h-1 bg-amber-600 mx-auto rounded-full mt-4"></div></div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <blockquote class="bg-white p-7 rounded-2xl border border-neutral-100 shadow-sm"><div class="text-amber-500 mb-3" aria-label="5 stars">★★★★★</div><p class="text-neutral-600 text-sm mb-4">“A warm, woody fragrance profile for anyone who enjoys bold scents.”</p><p class="font-bold text-sm">Sample review</p><p class="text-xs text-neutral-400">Replace with a real customer review</p></blockquote>
+        <blockquote class="bg-white p-7 rounded-2xl border border-neutral-100 shadow-sm"><div class="text-amber-500 mb-3" aria-label="5 stars">★★★★★</div><p class="text-neutral-600 text-sm mb-4">“Fresh, clean notes make this collection worth exploring.”</p><p class="font-bold text-sm">Sample review</p><p class="text-xs text-neutral-400">Replace with a real customer review</p></blockquote>
+        <blockquote class="bg-white p-7 rounded-2xl border border-neutral-100 shadow-sm"><div class="text-amber-500 mb-3" aria-label="5 stars">★★★★★</div><p class="text-neutral-600 text-sm mb-4">“The ordering experience was simple and straightforward.”</p><p class="font-bold text-sm">Sample review</p><p class="text-xs text-neutral-400">Replace with a real customer review</p></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="bg-white py-16 md:py-20 border-t border-neutral-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="grid md:grid-cols-2 gap-12">
+      <div class="space-y-6"><h2 class="text-3xl font-serif font-semibold text-neutral-900">Connect with Scent Oasis</h2><p class="text-neutral-500 text-sm leading-relaxed">Questions about fragrances, bulk orders or delivery? Contact us using the details you provide below. Replace the sample contact information before publishing.</p>
+        <div class="space-y-5 pt-2">
+          <div class="flex items-center gap-4"><span class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center"><i class="fa-solid fa-phone"></i></span><div><p class="text-xs text-neutral-400 font-semibold uppercase">Phone / WhatsApp</p><p class="text-sm font-medium">+254 705 117 229</p></div></div>
+          <div class="flex items-center gap-4"><span class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center"><i class="fa-solid fa-envelope"></i></span><div><p class="text-xs text-neutral-400 font-semibold uppercase">Email</p><p class="text-sm font-medium">wawerua884@gmail.com</p></div></div>
+          <div class="flex items-center gap-4"><span class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center"><i class="fa-solid fa-location-dot"></i></span><div><p class="text-xs text-neutral-400 font-semibold uppercase">Location</p><p class="text-sm font-medium">Kenya</p></div></div>
+        </div>
+      </div>
+      <form id="contact-form" class="bg-neutral-50 p-8 rounded-3xl border border-neutral-100 space-y-4">
+        <h3 class="text-lg font-bold font-serif mb-2">Send Us a Message</h3>
+        <div><label for="contact-name" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Your name</label><input id="contact-name" name="name" type="text" required class="w-full px-4 py-3 border border-neutral-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 text-sm"></div>
+        <div><label for="contact-email" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Email address</label><input id="contact-email" name="email" type="email" required class="w-full px-4 py-3 border border-neutral-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 text-sm"></div>
+        <div><label for="contact-message" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Message</label><textarea id="contact-message" name="message" rows="4" required class="w-full px-4 py-3 border border-neutral-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 text-sm"></textarea></div>
+        <button type="submit" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-semibold py-3 rounded-xl transition text-sm">Prepare Email</button>
+        <p class="text-xs text-neutral-500">This opens your email app; it does not send or store messages on this website.</p>
+      </form>
+    </div></div>
+  </section>
+
+  <section id="checkout" class="bg-neutral-100 py-16 md:py-20 border-t border-neutral-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"><div class="bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-5">
+      <div class="md:col-span-2 bg-neutral-950 text-white p-8 md:p-10"><h3 class="text-xl font-serif font-semibold mb-6">Your Order</h3><div id="cart-items" class="space-y-4"><p class="text-sm text-neutral-400">Your cart is empty. Add a fragrance to get started.</p></div><div class="border-t border-white/15 mt-6 pt-5 flex justify-between font-semibold"><span>Subtotal</span><span id="cart-total">KES 0</span></div><p class="text-xs text-neutral-400 mt-3">Delivery is not included. Confirm delivery cost before payment.</p></div>
+      <div class="md:col-span-3 p-8 md:p-10"><h3 class="text-xl font-serif font-semibold mb-2">Order Details</h3><p class="text-sm text-neutral-500 mb-6">Complete your details to prepare an order request in WhatsApp.</p>
+        <form id="order-form" class="space-y-4">
+          <div><label for="order-name" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Full name</label><input id="order-name" name="name" required class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm" placeholder="Your name"></div>
+          <div><label for="order-phone" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Phone number</label><input id="order-phone" name="phone" required type="tel" class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm" placeholder="+254..."></div>
+          <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-4 space-y-4">
+            <div><label for="order-county" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">County (all 47 counties)</label><select id="order-county" name="county" required class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm bg-white"><option value="">Select your county</option></select></div>
+            <div><label for="order-subcounty" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Sub-county</label><select id="order-subcounty" name="subcounty" required disabled class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm bg-white"><option value="">Select county first</option></select></div>
+            <div><label for="order-town" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Town / estate / village / delivery point</label><input id="order-town" name="town" required class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm bg-white" placeholder="e.g. Chuka, Ndagani, estate or nearest landmark"></div>
+            <p class="text-xs text-neutral-500">We accept orders from across Kenya. Share a town, estate or nearby landmark so we can confirm delivery options and cost.</p>
+          </div>
+          <div><label for="order-notes" class="block text-xs uppercase font-semibold text-neutral-500 mb-1">Additional notes (optional)</label><textarea id="order-notes" name="notes" rows="2" class="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm" placeholder="Preferred delivery details"></textarea></div>
+          <button type="submit" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-semibold py-3.5 rounded-xl transition"><i class="fa-brands fa-whatsapp mr-2"></i>Prepare WhatsApp Order</button>
+          <p class="text-xs text-neutral-500">WhatsApp orders open a message addressed to +254 705 117 229.</p>
+        </form>
+      </div>
+    </div></div>
+  </section>
+  <section id="dashboard" class="so-dashboard">
+    <div class="dashboard-wrap">
+      <div class="dashboard-top"><div><span class="dashboard-label">Store management · Preview</span><h2 class="mt-3">Scent Oasis Dashboard</h2><p>A starting point for managing products, orders and store performance. This is a front-end preview; data is currently illustrative.</p></div><a href="#shop" class="so-button"><i class="fa-solid fa-store"></i> View storefront</a></div>
+      <div class="dashboard-cards">
+        <div class="dashboard-card"><i class="fa-solid fa-bag-shopping"></i><div class="metric">0</div><div class="muted">Orders received</div></div>
+        <div class="dashboard-card"><i class="fa-solid fa-sack-dollar"></i><div class="metric">KES 0</div><div class="muted">Sales recorded</div></div>
+        <div class="dashboard-card"><i class="fa-solid fa-spray-can-sparkles"></i><div class="metric">4</div><div class="muted">Products listed</div></div>
+        <div class="dashboard-card"><i class="fa-solid fa-message"></i><div class="metric">WhatsApp</div><div class="muted">Current order channel</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dashboard-panel"><h3>Quick actions</h3><div class="dashboard-actions"><a href="#shop"><i class="fa-solid fa-box-open mr-2"></i>Manage products <span class="muted block mt-1">Review current fragrance listings</span></a><a href="#checkout"><i class="fa-solid fa-clipboard-list mr-2"></i>View order form <span class="muted block mt-1">Test the customer checkout flow</span></a><a href="#contact"><i class="fa-solid fa-envelope mr-2"></i>Contact enquiries <span class="muted block mt-1">Update store contact details</span></a><a href="#top"><i class="fa-solid fa-palette mr-2"></i>Storefront design <span class="muted block mt-1">Continue improving the look and feel</span></a></div></div>
+        <div class="dashboard-panel"><h3>Recent orders</h3><table class="dashboard-table"><thead><tr><th>Order</th><th>Status</th><th>Total</th></tr></thead><tbody><tr><td colspan="3" class="muted" style="padding:20px 8px">No orders are stored yet. Customer orders currently open in WhatsApp and are not saved to a database.</td></tr></tbody></table><p class="muted mt-4">Next phase: connect a secure database and admin login so products and orders can be managed here.</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="follow-us" class="follow-us" aria-labelledby="follow-title">
+    <div class="follow-us-inner">
+      <h2 id="follow-title">Follow Scent Oasis</h2>
+      <p>Stay close to new arrivals, fragrance inspiration and special offers. Follow us on social media.</p>
+      <div class="social-links">
+        <a class="social-link" href="https://www.facebook.com/search/top?q=Arnold%20Waweru" target="_blank" rel="noopener noreferrer" aria-label="Find Arnold Waweru on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span>Follow on Facebook</span></a>
+        <a class="social-link" href="https://www.instagram.com/awer7746/" target="_blank" rel="noopener noreferrer" aria-label="Follow awer7746 on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span>Follow on Instagram</span></a>
+      </div>
+      <p class="social-note">Facebook opens a search for “Arnold Waweru” because a direct page URL was not provided. Replace it with your exact Facebook page link when available.</p>
+    </div>
+  </section>
+  <footer class="bg-neutral-950 text-neutral-400 py-8 text-center text-sm"><p class="text-white font-serif tracking-widest mb-2">SCENT OASIS</p><p class="mb-3"><a href="#follow-us" class="text-orange-300 hover:text-white">Follow Us</a></p><p>&copy; <span id="year"></span> Scent Oasis. All rights reserved.</p><p class="mt-2 text-xs">Product descriptions and prices should be verified by the store owner before publishing.</p></footer>
+
+  <script>
+    // PUBLIC FRONTEND SETTINGS ONLY. Never put a service-role/secret key in this file.
+    // Add your Supabase Project URL and publishable key (or legacy anon key) below.
+    const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+    const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+    const WHATSAPP_NUMBER = "254705117229";
+    const cart = new Map();
+    const money = amount => "KES " + Number(amount || 0).toLocaleString("en-KE");
+    let supabaseClient = null;
+
+    function makeProductCard(product, index) {
+      const name = String(product.name || "Unnamed fragrance");
+      const price = Number(product.price_ksh || 0);
+      const description = String(product.description || "Explore this fragrance from our curated selection.");
+      const card = document.createElement("article");
+      card.className = "product-card";
+      card.dataset.name = name;
+      card.dataset.origin = "Scent Oasis";
+      card.dataset.notes = (name + " " + description).toLowerCase();
+      card.dataset.order = String(index);
+
+      const art = document.createElement("div");
+      art.className = "product-art bg-gradient-to-tr from-rose-100 to-orange-50 flex items-center justify-center relative";
+      const badge = document.createElement("span");
+      badge.className = "product-badge";
+      badge.textContent = "SCENT OASIS FRAGRANCE";
+      art.appendChild(badge);
+      if (product.image_url) {
+        const img = document.createElement("img");
+        img.src = String(product.image_url);
+        img.alt = name;
+        img.loading = "lazy";
+        img.className = "w-full h-full object-cover";
+        img.onerror = () => { img.remove(); const icon = document.createElement("i"); icon.className = "fa-solid fa-spray-can-sparkles text-rose-500 text-5xl"; icon.setAttribute("aria-hidden", "true"); art.appendChild(icon); };
+        art.appendChild(img);
+      } else {
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-spray-can-sparkles text-rose-500 text-5xl";
+        icon.setAttribute("aria-hidden", "true");
+        art.appendChild(icon);
+      }
+
+      const body = document.createElement("div");
+      body.className = "product-body flex flex-col flex-grow";
+      const brand = document.createElement("p"); brand.className = "product-brand"; brand.textContent = "SCENT OASIS • FRAGRANCE";
+      const title = document.createElement("h3"); title.textContent = name;
+      const desc = document.createElement("p"); desc.className = "product-description"; desc.textContent = description;
+      const row = document.createElement("div"); row.className = "product-buy-row";
+      const priceEl = document.createElement("span"); priceEl.className = "product-price"; priceEl.textContent = money(price);
+      const button = document.createElement("button"); button.type = "button"; button.className = "add-to-cart"; button.dataset.name = name; button.dataset.price = String(price); button.setAttribute("aria-label", "Add " + name + " to order");
+      button.innerHTML = '<i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Add';
+      button.addEventListener("click", () => {
+        if (cart.has(name)) cart.get(name).qty++;
+        else cart.set(name, { price, qty: 1 });
+        renderCart();
+      });
+      row.append(priceEl, button); body.append(brand, title, desc, row); card.append(art, body);
+      return card;
+    }
+
+    async function loadSupabaseProducts() {
+      const status = document.getElementById("catalogue-status");
+      const configured = SUPABASE_URL.startsWith("https://") &&
+        !SUPABASE_URL.includes("PASTE_YOUR") &&
+        SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR");
+      if (!configured || !window.supabase?.createClient) {
+        status.textContent = "Starter catalogue · Supabase connection not configured yet";
+        return;
+      }
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        const { data, error } = await supabaseClient
+          .from("products")
+          .select("id,name,description,price_ksh,stock,image_url,active")
+          .eq("active", true)
+          .order("name", { ascending: true });
+        if (error) throw error;
+        if (!Array.isArray(data) || data.length === 0) {
+          status.textContent = "Supabase connected · No active products yet; showing starter catalogue";
+          return; // Keep the existing catalogue until products have been imported.
+        }
+        const grid = document.getElementById("product-grid");
+        grid.replaceChildren(...data.map(makeProductCard));
+        status.textContent = "Live catalogue · " + data.length + " active products";
+        document.getElementById("no-results").classList.add("hidden");
+      } catch (error) {
+        console.error("Scent Oasis product loading error:", error);
+        status.textContent = "Showing starter catalogue · Live products could not be loaded";
+      }
+    }
+
+    function renderCart() {
+      const container = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+      const countEl = document.getElementById("cart-count");
+      const headerCountEl = document.getElementById("header-cart-count");
+      container.innerHTML = "";
+      let total = 0, count = 0;
+      if (cart.size === 0) {
+        container.innerHTML = '<p class="text-sm text-neutral-400">Your cart is empty. Add a fragrance to get started.</p>';
+      } else {
+        cart.forEach((item, name) => {
+          total += item.price * item.qty;
+          count += item.qty;
+          const row = document.createElement("div");
+          row.className = "flex items-start justify-between gap-3 border-b border-white/10 pb-3";
+          const info = document.createElement("div");
+          const title = document.createElement("p");
+          title.className = "text-sm font-medium";
+          title.textContent = name;
+          const details = document.createElement("p");
+          details.className = "text-xs text-neutral-400 mt-1";
+          details.textContent = money(item.price) + " each";
+          const controls = document.createElement("div");
+          controls.className = "flex items-center gap-2 mt-2";
+          const minus = document.createElement("button");
+          minus.type = "button"; minus.textContent = "−"; minus.setAttribute("aria-label", "Decrease " + name); minus.className = "px-2 rounded bg-white/10";
+          minus.addEventListener("click", () => { item.qty--; if (item.qty <= 0) cart.delete(name); renderCart(); });
+          const qty = document.createElement("span"); qty.textContent = item.qty;
+          const plus = document.createElement("button");
+          plus.type = "button"; plus.textContent = "+"; plus.setAttribute("aria-label", "Increase " + name); plus.className = "px-2 rounded bg-white/10";
+          plus.addEventListener("click", () => { item.qty++; renderCart(); });
+          controls.append(minus, qty, plus);
+          info.append(title, details, controls);
+          const lineTotal = document.createElement("span");
+          lineTotal.className = "text-sm whitespace-nowrap";
+          lineTotal.textContent = money(item.price * item.qty);
+          row.append(info, lineTotal);
+          container.append(row);
+        });
+      }
+      cart.forEach(item => { count += 0; });
+      count = Array.from(cart.values()).reduce((sum, item) => sum + item.qty, 0);
+      total = Array.from(cart.values()).reduce((sum, item) => sum + item.price * item.qty, 0);
+      totalEl.textContent = money(total);
+      countEl.textContent = count;
+      if (headerCountEl) headerCountEl.textContent = count;
+    }
+
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+      button.addEventListener("click", () => {
+        const name = button.dataset.name;
+        const price = Number(button.dataset.price);
+        if (cart.has(name)) cart.get(name).qty++;
+        else cart.set(name, { price, qty: 1 });
+        renderCart();
+      });
+    });
+
+    document.getElementById("search-input").addEventListener("input", event => {
+      const query = event.target.value.trim().toLowerCase();
+      let visible = 0;
+      document.querySelectorAll(".product-card").forEach(card => {
+        const matches = (card.dataset.name + " " + card.dataset.origin + " " + card.dataset.notes).toLowerCase().includes(query);
+        card.classList.toggle("hidden", !matches);
+        if (matches) visible++;
+      });
+      document.getElementById("no-results").classList.toggle("hidden", visible !== 0);
+    });
+
+    document.getElementById("sort-products").addEventListener("change", event => {
+      const grid = document.getElementById("product-grid");
+      const cards = Array.from(grid.querySelectorAll(".product-card"));
+      const mode = event.target.value;
+      cards.sort((a,b) => {
+        if (mode === "name") return a.dataset.name.localeCompare(b.dataset.name);
+        if (mode === "price-low") return Number(a.querySelector(".add-to-cart").dataset.price) - Number(b.querySelector(".add-to-cart").dataset.price);
+        if (mode === "price-high") return Number(b.querySelector(".add-to-cart").dataset.price) - Number(a.querySelector(".add-to-cart").dataset.price);
+        return Number(a.dataset.order || 0) - Number(b.dataset.order || 0);
+      });
+      cards.forEach(card => grid.appendChild(card));
+    });
+
+    document.getElementById("contact-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const subject = encodeURIComponent("Scent Oasis website inquiry");
+      const body = encodeURIComponent("Name: " + data.get("name") + "\nEmail: " + data.get("email") + "\n\nMessage:\n" + data.get("message"));
+      window.location.href = "mailto:wawerua884@gmail.com?subject=" + subject + "&body=" + body;
+    });
+
+    // County and sub-county options based on the Kenya administrative list.
+    const kenyaLocations = {"Baringo": ["Baringo Central", "Baringo North", "Baringo South", "Eldama Ravine", "Mogotio", "Tiaty"], "Bomet": ["Bomet Central", "Bomet East", "Chepalungu", "Konoin", "Sotik"], "Bungoma": ["Bumula", "Kabuchai", "Kanduyi", "Kimilili", "Mt. Elgon", "Sirisia", "Tongaren", "Webuye East", "Webuye West"], "Busia": ["Budalangi", "Butula", "Funyula", "Matayos", "Nambale", "Teso North", "Teso South"], "Elgeyo-Marakwet": ["Keiyo North", "Keiyo South", "Marakwet East", "Marakwet West"], "Embu": ["Manyatta", "Mbeere North", "Mbeere South", "Runyenjes"], "Garissa": ["Balambala", "Dadaab", "Fafi", "Garissa Township", "Hulugho", "Ijara", "Lagdera"], "Homa Bay": ["Homa Bay Town", "Kabondo Kasipul", "Karachuonyo", "Kasipul", "Mbita", "Ndhiwa", "Rangwe", "Suba North", "Suba South"], "Isiolo": ["Isiolo", "Merti", "Garbatulla"], "Kajiado": ["Kajiado Central", "Kajiado North", "Kajiado West", "Loitokitok", "Mashuuru", "Isinya"], "Kakamega": ["Butere", "Kakamega Central", "Kakamega East", "Kakamega North", "Kakamega South", "Khwisero", "Lugari", "Likuyani", "Lurambi", "Matete", "Mumias East", "Mumias West", "Navakholo"], "Kericho": ["Ainamoi", "Belgut", "Bureti", "Kipkelion East", "Kipkelion West", "Soin/Sigowet"], "Kiambu": ["Gatundu North", "Gatundu South", "Githunguri", "Juja", "Kabete", "Kiambaa", "Kiambu", "Kikuyu", "Limuru", "Ruiru", "Thika Town", "Lari"], "Kilifi": ["Ganze", "Kaloleni", "Kilifi North", "Kilifi South", "Magarini", "Malindi", "Rabai"], "Kirinyaga": ["Kirinyaga Central", "Kirinyaga East", "Kirinyaga West", "Mwea East", "Mwea West"], "Kisii": ["Bobasi", "Bonchari", "Bomachoge Chache", "Bomachoge Borabu", "Kitutu Chache North", "Kitutu Chache South", "Nyaribari Chache", "Nyaribari Masaba", "South Mugirango"], "Kisumu": ["Kisumu Central", "Kisumu East", "Kisumu West", "Muhoroni", "Nyakach", "Nyando", "Seme"], "Kitui": ["Kitui Central", "Kitui East", "Kitui Rural", "Kitui South", "Kitui West", "Mwingi Central", "Mwingi North", "Mwingi West"], "Kwale": ["Kinango", "Lunga Lunga", "Matuga", "Msambweni"], "Laikipia": ["Laikipia Central", "Laikipia East", "Laikipia North", "Laikipia West", "Nyahururu"], "Lamu": ["Lamu East", "Lamu West"], "Machakos": ["Kathiani", "Machakos Town", "Masinga", "Matungulu", "Mavoko", "Mwala", "Yatta"], "Makueni": ["Kaiti", "Kibwezi East", "Kibwezi West", "Kilome", "Makueni", "Mbooni"], "Mandera": ["Banissa", "Lafey", "Mandera East", "Mandera North", "Mandera South", "Mandera West"], "Marsabit": ["Laisamis", "Moyale", "North Horr", "Saku"], "Meru": ["Buuri", "Igembe Central", "Igembe North", "Igembe South", "Imenti Central", "Imenti North", "Imenti South", "Tigania East", "Tigania West"], "Migori": ["Awendo", "Kuria East", "Kuria West", "Mabera", "Ntimaru", "Rongo", "Suna East", "Suna West", "Uriri"], "Mombasa": ["Changamwe", "Jomvu", "Kisauni", "Likoni", "Mvita", "Nyali"], "Murang'a": ["Gatanga", "Kahuro", "Kandara", "Kangema", "Kigumo", "Kiharu", "Mathioya", "Murang'a South"], "Nairobi City": ["Dagoretti North", "Dagoretti South", "Embakasi Central", "Embakasi East", "Embakasi North", "Embakasi South", "Embakasi West", "Kamukunji", "Kasarani", "Kibra", "Lang'ata", "Makadara", "Mathare", "Roysambu", "Ruaraka", "Starehe", "Westlands"], "Nakuru": ["Bahati", "Gilgil", "Kuresoi North", "Kuresoi South", "Molo", "Naivasha", "Nakuru Town East", "Nakuru Town West", "Njoro", "Rongai", "Subukia"], "Nandi": ["Aldai", "Chesumei", "Emgwen", "Mosop", "Nandi Hills", "Tindiret"], "Narok": ["Narok East", "Narok North", "Narok South", "Narok West", "Transmara East", "Transmara West"], "Nyamira": ["Borabu", "Manga", "Masaba North", "Nyamira North", "Nyamira South"], "Nyandarua": ["Kinangop", "Kipipiri", "Ndaragwa", "Ol Kalou", "Ol Joro Orok"], "Nyeri": ["Kieni East", "Kieni West", "Mathira East", "Mathira West", "Mukurweini", "Nyeri Town", "Othaya", "Tetu"], "Samburu": ["Samburu East", "Samburu North", "Samburu West"], "Siaya": ["Alego Usonga", "Bondo", "Gem", "Rarieda", "Ugenya", "Ugunja"], "Taita-Taveta": ["Mwatate", "Taveta", "Voi", "Wundanyi"], "Tana River": ["Bura", "Galole", "Garsen"], "Tharaka-Nithi": ["Chuka", "Igambang'ombe", "Maara", "Tharaka North", "Tharaka South", "Chiakariga", "Muthambi"], "Trans-Nzoia": ["Cherangany", "Endebess", "Kiminini", "Kwanza", "Saboti"], "Turkana": ["Loima", "Turkana Central", "Turkana East", "Turkana North", "Turkana South"], "Uasin Gishu": ["Ainabkoi", "Kapseret", "Kesses", "Moiben", "Soy", "Turbo"], "Vihiga": ["Emuhaya", "Hamisi", "Luanda", "Sabatia", "Vihiga"], "Wajir": ["Eldas", "Tarbaj", "Wajir East", "Wajir North", "Wajir South", "Wajir West"], "West Pokot": ["Central Pokot", "North Pokot", "Pokot South", "West Pokot"]};
+    const countySelect = document.getElementById("order-county");
+    const subcountySelect = document.getElementById("order-subcounty");
+    Object.keys(kenyaLocations).sort((a,b) => a.localeCompare(b)).forEach(county => {
+      const option = document.createElement("option"); option.value = county; option.textContent = county; countySelect.appendChild(option);
+    });
+    countySelect.addEventListener("change", () => {
+      subcountySelect.innerHTML = '<option value="">Select your sub-county</option>';
+      const subcounties = kenyaLocations[countySelect.value] || [];
+      subcounties.forEach(subcounty => { const option = document.createElement("option"); option.value = subcounty; option.textContent = subcounty; subcountySelect.appendChild(option); });
+      subcountySelect.disabled = subcounties.length === 0;
+    });
+
+    document.getElementById("order-form").addEventListener("submit", event => {
+      event.preventDefault();
+      if (cart.size === 0) {
+        alert("Please add at least one fragrance to your order.");
+        return;
+      }
+      if (!WHATSAPP_NUMBER) {
+        alert("Please configure the WhatsApp number in the HTML file before using WhatsApp ordering.");
+        return;
+      }
+      const data = new FormData(event.currentTarget);
+      const lines = Array.from(cart.entries()).map(([name, item]) => `${name} x ${item.qty} — ${money(item.price * item.qty)}`);
+      const total = Array.from(cart.values()).reduce((sum, item) => sum + item.price * item.qty, 0);
+      const message = [
+        "Hello Scent Oasis, I'd like to place an order.",
+        "",
+        ...lines,
+        "",
+        "Subtotal: " + money(total),
+        "Delivery: Please confirm",
+        "",
+        "Name: " + data.get("name"),
+        "Phone: " + data.get("phone"),
+        "County: " + data.get("county"),
+        "Sub-county: " + data.get("subcounty"),
+        "Town / estate / village / delivery point: " + data.get("town"),
+        "Notes: " + (data.get("notes") || "None")
+      ].join("\n");
+      window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+    renderCart();
+    loadSupabaseProducts();
+  </script>
+</body>
+</html>
